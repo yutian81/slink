@@ -269,46 +269,20 @@ body {
   border-radius: 0.5rem 0.5rem 0 0 !important;
 }
 
-/* 媒体查询 - 992px (布局切换：两栏变单栏) */
-@media (max-width: 992px) {
-  .cards-container {
-    flex-direction: column;
-  }
-
-  .card-wrapper,
-  .card-wrapper:first-child {
-    flex: 1 1 100%;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-  }
+/* 媒体查询 - 768px (布局切换：两栏变单栏) */
+@media (max-width: 768pxpx) {
+  .cards-container { flex-direction: column; }
+  .card-wrapper, .card-wrapper:first-child { flex: 1 1 100%; width: 100%; min-width: 100%; max-width: 100%; }
 }
 
 /* 媒体查询 - 576px (小屏优化) */
 @media (max-width: 576px) {
-  .card-header {
-    padding: 0.75rem 1rem;
-  }
-
-  #longURL::placeholder {
-    font-size: 0.8rem;
-  }
-
-  .form-control,
-  .input-group-text {
-    padding: 0.6rem 0.8rem;
-  }
-
+  .card-header { padding: 0.75rem 1rem; }
+  #longURL::placeholder { font-size: 0.8rem; }
+  .form-control, .input-group-text { padding: 0.6rem 0.8rem; }
   /* 链接管理按钮布局优化 */
-  .d-flex.justify-content-between.mb-4 {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .d-flex.justify-content-between.mb-4 .btn {
-    flex: 1 1 30%;
-    min-width: 100px;
-  }
+  .d-flex.justify-content-between.mb-4 { flex-wrap: wrap; gap: 0.5rem; }
+  .d-flex.justify-content-between.mb-4 .btn { flex: 1 1 30%; min-width: 100px; }
 }
 
 /* 黑暗模式 (Dark Mode) */
@@ -328,8 +302,5 @@ body {
     --card-footer-bg: rgba(0, 0, 0, 0.1);
     --qrcode-bg: rgba(103, 119, 148, 0.8);
   }
-
-  .list-group-item:hover {
-    background: rgba(78, 115, 223, 0.1);
-  }
+  .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
 }
