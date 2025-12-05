@@ -103,7 +103,7 @@ async function handleRequest(request, env) {
     const config = {
         password: env.PASSWORD || "link", // 访问路径，默认 /link
         result_page: env.RESULT_PAGE === "false" || true, // 跳转页面，默认不启用
-        theme: env.THEME || "theme/default", // 主题，可选 theme/urlcool
+        theme: env.THEME || "default", // 主题，可选 theme/urlcool
         cors: true, // 允许跨域
         unique_link: true, // 唯一链接
         custom_link: env.CUSTOM_LINK === "true" || true, // 自定义短链，默认启用
