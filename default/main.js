@@ -214,16 +214,12 @@ function toggleQrcode(shortUrl) {
       size: 192,
       text: fullUrl
     });
-
-    // 更新按钮样式
     qrcodeBtn.classList.replace('btn-info', 'btn-warning');
     qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="隐藏二维码"></i>';
   } else {
     setTimeout(() => {
       qrcodeContainer.innerHTML = '';
     }, 500);
-
-    // 更新按钮样式
     qrcodeBtn.classList.replace('btn-warning', 'btn-info');
     qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="显示二维码"></i>';
   }
