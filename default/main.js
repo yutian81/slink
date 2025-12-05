@@ -109,26 +109,27 @@ function shorturl(event) {
 }
 
 function loadUrlList() {
-  let urlList = document.querySelector("#urlList")
-  urlList.innerHTML = ''; // 强制清空
-  urlList.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-primary"></div></div>';
+  let urlList = document.querySelector("#urlList")
+  urlList.innerHTML = ''; // 清空列表，移除加载动画
 
-  while (urlList.firstChild) {
-    urlList.removeChild(urlList.firstChild)
-  }
+  let longUrl = document.querySelector("#longURL").value.trim() // 文本框中的长链接
+  let keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    keys.push(localStorage.key(i));
+  }
 
-  let longUrl = document.querySelector("#longURL").value // 文本框中的长链接
-  setTimeout(() => {
-    let len = localStorage.length
-    for (; len > 0; len--) {
-      let keyShortURL = localStorage.key(len - 1)
-      let valueLongURL = localStorage.getItem(keyShortURL)
-      // 如果长链接为空，加载所有的localStorage；否则，加载匹配的localStorage
-      if (longUrl == "" || (longUrl == valueLongURL)) {
-        addUrlToList(keyShortURL, valueLongURL)
-      }
-    }
-  }, 100);
+  keys.reverse().forEach(keyShortURL => {
+    let valueLongURL = localStorage.getItem(keyShortURL)
+    // 如果长链接为空，加载所有的localStorage；否则，加载匹配的localStorage
+    if (longUrl === "" || (longUrl === valueLongURL)) {
+      addUrlToList(keyShortURL, valueLongURL)
+    }
+  });
+  
+  // 如果列表为空，显示提示
+  if (urlList.children.length === 0) {
+    urlList.innerHTML = '<div class="text-center py-3 text-muted">暂无短链接记录</div>';
+  }
 }
 
 function addUrlToList(shortUrl, longUrl) {
@@ -177,23 +178,55 @@ function addUrlToList(shortUrl, longUrl) {
   keyItem.appendChild(keyTxt)
 
   // 显示二维码按钮
-  let qrcodeBtn = document.createElement('button')  
-  qrcodeBtn.setAttribute('type', 'button')
-  qrcodeBtn.classList.add("btn", "btn-info")
-  qrcodeBtn.setAttribute('onclick', 'buildQrcode(\"' + shortUrl + '\")')
-  qrcodeBtn.setAttribute('id', 'qrcodeBtn-' + shortUrl)
-  qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="显示二维码"></i>' // 使用二维码图标
-  keyItem.appendChild(qrcodeBtn)
-  child.appendChild(keyItem)
+  let qrcodeBtn = document.createElement('button')  
+  qrcodeBtn.setAttribute('type', 'button')
+  qrcodeBtn.classList.add("btn", "btn-info")
+  qrcodeBtn.setAttribute('onclick', 'toggleQrcode(\"' + shortUrl + '\")')
+  qrcodeBtn.setAttribute('id', 'qrcodeBtn-' + shortUrl)
+  qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="显示二维码"></i>' // 使用二维码图标
+  keyItem.appendChild(qrcodeBtn)
+  child.appendChild(keyItem)
 
   // 插入一个二维码占位
   let qrcodeItem = document.createElement('div');
-  qrcodeItem.setAttribute('id', 'qrcode-' + shortUrl)
-  child.appendChild(qrcodeItem)
+  qrcodeItem.setAttribute('id', 'qrcode-' + shortUrl)
+  qrcodeItem.classList.add('qrcode-container-wrapper');
+  qrcodeItem.style.display = 'none'; // 初始隐藏
+  child.appendChild(qrcodeItem)
 
   // 长链接信息
   child.appendChild(buildValueItemFunc(longUrl))
   urlList.append(child)
+}
+
+// 二维码切换逻辑
+function toggleQrcode(shortUrl) {
+    const qrcodeWrapper = document.getElementById('qrcode-' + shortUrl);
+    const qrcodeBtn = document.getElementById('qrcodeBtn-' + shortUrl);
+    const fullUrl = window.location.protocol + "//" + window.location.host + "/" + shortUrl;
+
+    if (qrcodeWrapper.style.display === 'none') {
+        // 确保容器为空，然后生成二维码
+        qrcodeWrapper.innerHTML = '';
+        $(qrcodeWrapper).qrcode({
+            render: 'canvas',
+            size: 192,
+            text: fullUrl
+        });
+        
+        // 应用 CSS 样式
+        qrcodeWrapper.style.display = 'block';
+        qrcodeWrapper.classList.add('qrcode-container'); 
+        qrcodeBtn.classList.replace('btn-info', 'btn-warning');
+        qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="隐藏二维码"></i>';
+    } else {
+        // 隐藏二维码
+        qrcodeWrapper.style.display = 'none';
+        qrcodeWrapper.innerHTML = '';
+        qrcodeWrapper.classList.remove('qrcode-container'); 
+        qrcodeBtn.classList.replace('btn-warning', 'btn-info');
+        qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="显示二维码"></i>';
+    }
 }
 
 function clearLocalStorage() {
@@ -329,30 +362,55 @@ function loadKV() {
 
 // 生成二维码
 function buildQrcode(shortUrl) {
-  // 感谢项目 https://github.com/lrsjng/jquery-qrcode
-  var options = {
-    render: 'canvas',
-    minVersion: 1,
-    maxVersion: 40,
-    ecLevel: 'Q', // 'L', 'M', 'Q' or 'H'
-    left: 0,
-    top: 0,
-    size: 192,
-    fill: '#000',
-    background: null,
-    text: window.location.protocol + "//" + window.location.host + "/" + shortUrl,
-    radius: 4,
-    quiet: 2,
-    mode: 0,
-    mSize: 0.1,
-    mPosX: 0.5,
-    mPosY: 0.5,
-    label: 'no label',
-    fontname: 'sans',
-    fontcolor: '#000',
-    image: null
-  };
-  $("#qrcode-" + shortUrl.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1").replace(/(:|\#|\[|\]|,|=|@)/g, "\\$1") ).empty().qrcode(options);
+    const qrcodeContainer = document.querySelector("#qrcode-" + shortUrl);
+    const fullUrl = window.location.protocol + "//" + window.location.host + "/" + shortUrl;
+    
+    // 检查是否有二维码内容
+    if (qrcodeContainer.innerHTML.trim() !== '') {
+        // 如果已存在，则隐藏
+        qrcodeContainer.innerHTML = '';
+        qrcodeContainer.style.height = '0';
+        qrcodeContainer.style.opacity = '0';
+    } else {
+        // 如果不存在，则生成并显示
+        var options = {
+          render: 'canvas',
+          minVersion: 1,
+          maxVersion: 40,
+          ecLevel: 'Q', // 'L', 'M', 'Q' or 'H'
+          left: 0,
+          top: 0,
+          size: 192,
+          fill: '#000',
+          background: null,
+          text: window.location.protocol + "//" + window.location.host + "/" + shortUrl,
+          radius: 4,
+          quiet: 2,
+          mode: 0,
+          mSize: 0.1,
+          mPosX: 0.5,
+          mPosY: 0.5,
+          label: 'no label',
+          fontname: 'sans',
+          fontcolor: '#000',
+          image: null
+        };
+        $("#qrcode-" + shortUrl.replace(/(:|\.|\[|\]|,|=|@)/g, "\\$1").replace(/(:|\#|\[|\]|,|=|@)/g, "\\$1") ).empty().qrcode(options);
+        $(qrcodeContainer).empty().qrcode(options);
+
+        // 显示容器
+        qrcodeContainer.style.height = 'auto';
+        qrcodeContainer.style.opacity = '1';
+
+        // 将二维码容器包裹在 .qrcode-container 中，以应用居中和样式
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('qrcode-container');
+        wrapper.appendChild(qrcodeContainer.firstChild);
+        qrcodeContainer.appendChild(wrapper);
+
+        // 绑定点击事件，以便用户点击二维码图片可直接打开链接 (可选)
+        $(wrapper).click(() => window.open(fullUrl, '_blank'));
+    }
 }
 
 function buildValueTxt(longUrl) {
@@ -387,9 +445,11 @@ document.addEventListener('DOMContentLoaded', function() {
         window.visit_count_enabled = data.visit_count;
         window.enable_qrcode = data.enable_qrcode;
         window.allow_custom_key = data.custom_link;
-        window.result_page_enabled = data.result_page_enabled;
+        window.result_page_enabled = data.result_page;
         if (!data.custom_link) { // 如果不允许自定义短链接，隐藏自定义链接容器
           document.getElementById('customLinkContainer').style.display = 'none';
+        } else {
+          document.getElementById('customLinkContainer').style.display = 'block';
         }
         // 可以在这里存储其他配置
       }
