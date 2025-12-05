@@ -205,23 +205,22 @@
   .list-group-item .input-group .btn:last-child { border-top-right-radius: 8px !important; }
   
   .qrcode-container {
-    display: inline-block;
+    display: block;
     background: var(--qrcode-bg);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
-    padding: 0px 10px;
+    padding: 0;
     margin: 0 auto;
     transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, padding 0.5s ease-in-out;
   }
 
   .qrcode-container.qrcode-visible {
-    max-height: 192px;
+    max-height: 220px;
     opacity: 1;
     padding: 10px;
-    margin: 8px auto;
   }
   
   .qrcode-container canvas {
