@@ -196,7 +196,6 @@
   .qrcode-container {
     display: block;
     background: var(--qrcode-bg);
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
     border: 1px solid var(--border-color);
     text-align: center;
     max-height: 0;
