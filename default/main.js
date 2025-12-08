@@ -1,8 +1,6 @@
 let res;
 let apiSrv = window.location.pathname;
 let password_value = document.querySelector("#passwordText").value;
-// let apiSrv = "https://journal.crazypeace.workers.dev";
-// let password_value = "journaljournal";
 let buildValueItemFunc = buildValueTxt; // 这是默认行为, 在不同的index.html中可以设置为不同的行为
 
 // 复制短链接
@@ -122,7 +120,7 @@ function loadUrlList() {
 
   keys.reverse().forEach(keyShortURL => {
     let valueLongURL = localStorage.getItem(keyShortURL)
-    // 如果长链接为空，加载所有的localStorage；否则，加载匹配的localStorage
+    // 如果长链接为空，加载localStorage；否则，加载匹配的localStorage
     if (longUrl === "" || (longUrl === valueLongURL)) {
       addUrlToList(keyShortURL, valueLongURL)
     }

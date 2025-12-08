@@ -294,7 +294,7 @@ body.dark-mode {
   --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
 body.dark-mode .form-label { color: var(--primary-color); }
-body.dark-mode .text-muted,
+body.dark-mode .text-muted { color: var(--text-secondary) !important; }
 body.dark-mode .copyright,
 body.dark-mode .footer-link,
 body.dark-mode .theme-toggle-btn,
