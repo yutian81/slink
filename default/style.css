@@ -171,7 +171,7 @@ body {
   padding: 16px;
   margin: 0 16px 16px 0;
   border: 1px solid var(--border-color);
-  border-top-width: 1px;
+  border-top-width: 1px !important;
   border-radius: 8px;
   transition: all 0.2s;
   overflow-wrap: break-word;
@@ -186,6 +186,9 @@ body {
 }
 .list-group-item .text-primary { cursor: pointer; transition: color 0.2s; }
 .list-group-item .text-primary:hover { color: var(--accent-color); }
+/* 仅为两端元素设置顶部的圆角，以匹配列表项的圆角 */
+.list-group-item .input-group .btn:first-child { border-top-left-radius: 8px !important; }
+.list-group-item .input-group .btn:last-child { border-top-right-radius: 8px !important; }
 
 .qrcode-container {
   display: block;
