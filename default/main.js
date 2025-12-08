@@ -135,14 +135,20 @@ function loadUrlList() {
 function addUrlToList(shortUrl, longUrl) {
   let urlList = document.querySelector("#urlList")
   let child = document.createElement('div')
-  child.classList.add("mb-3", "list-group-item")
+  child.classList.add("list-group-item")
   let keyItem = document.createElement('div')
-  keyItem.classList.add("mt-3", "input-group")
+  keyItem.classList.add("input-group")
+
+  // 短链接信息
+  let keyTxt = document.createElement('span')
+  keyTxt.classList.add("form-control")
+  keyTxt.innerText = window.location.protocol + "//" + window.location.host + "/" + shortUrl
+  keyItem.appendChild(keyTxt)
 
   // 删除按钮
   let delBtn = document.createElement('button')
   delBtn.setAttribute('type', 'button')
-  delBtn.classList.add("btn", "btn-danger", "rounded-bottom-0")
+  delBtn.classList.add("btn", "btn-danger")
   delBtn.setAttribute('onclick', 'deleteShortUrl(\"' + shortUrl + '\")')
   delBtn.setAttribute('id', 'delBtn-' + shortUrl)
   delBtn.innerHTML = '<i class="fas fa-trash-alt" title="删除短链接"></i>'
@@ -171,16 +177,10 @@ function addUrlToList(shortUrl, longUrl) {
   );
   keyItem.appendChild(copyBtn);
 
-  // 短链接信息
-  let keyTxt = document.createElement('span')
-  keyTxt.classList.add("form-control", "rounded-bottom-0")
-  keyTxt.innerText = window.location.protocol + "//" + window.location.host + "/" + shortUrl
-  keyItem.appendChild(keyTxt)
-
   // 显示二维码按钮
   let qrcodeBtn = document.createElement('button')
   qrcodeBtn.setAttribute('type', 'button')
-  qrcodeBtn.classList.add("btn", "btn-info")
+  qrcodeBtn.classList.add("btn", "btn-info",)
   qrcodeBtn.setAttribute('onclick', 'toggleQrcode(\"' + shortUrl + '\")')
   qrcodeBtn.setAttribute('id', 'qrcodeBtn-' + shortUrl)
   qrcodeBtn.innerHTML = '<i class="fas fa-qrcode" title="显示二维码"></i>'
@@ -367,7 +367,7 @@ function loadKV() {
 
 function buildValueTxt(longUrl) {
   let valueTxt = document.createElement('div')
-  valueTxt.classList.add("form-control", "rounded-top-0")
+  valueTxt.classList.add("form-control")
   valueTxt.innerText = longUrl
   return valueTxt
 }
