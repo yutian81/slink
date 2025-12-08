@@ -270,6 +270,12 @@ body.light-mode {
   --card-footer-border: rgba(0, 0, 0, 0.05);
   --qrcode-bg: white;
 }
+body.light-mode .form-label { color: var(--text-primary); }
+body.light-mode .text-muted,
+body.light-mode .copyright,
+body.light-mode .footer-link,
+body.light-mode .theme-toggle-btn,
+body.light-mode .form-control::placeholder { color: var(--text-secondary); }
 
 /* 手动切换暗黑模式 (Dark Mode) */
 body.dark-mode {
@@ -287,11 +293,12 @@ body.dark-mode {
   --card-footer-bg: rgba(0, 0, 0, 0.1);
   --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
-body.dark-mode .form-label, 
-body.dark-mode .copyright, 
-body.dark-mode .footer-link { color: var(--primary-color); }
+body.dark-mode .form-label { color: var(--primary-color); }
+body.dark-mode .text-muted,
+body.dark-mode .copyright,
+body.dark-mode .footer-link,
+body.dark-mode .theme-toggle-btn,
 body.dark-mode .form-control::placeholder { color: var(--text-secondary); }
-body.dark-mode .theme-toggle-btn { color: var(--text-secondary); }
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
