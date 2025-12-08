@@ -135,7 +135,7 @@ function loadUrlList() {
 function addUrlToList(shortUrl, longUrl) {
   let urlList = document.querySelector("#urlList")
   let child = document.createElement('div')
-  child.classList.add("list-group-item")
+  child.classList.add("mb-3", "list-group-item")
   let keyItem = document.createElement('div')
   keyItem.classList.add("input-group")
 

@@ -168,8 +168,7 @@
   #urlList::-webkit-scrollbar-thumb { background-color: var(--primary-color); border-radius: 4px; }
   
   .list-group-item {
-    padding: 16px;
-    margin-bottom: 12px;
+    padding: 0 16px 16px 16px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
     transition: all 0.2s;
@@ -215,18 +214,14 @@
   /* 主题切换按钮 */
   .theme-toggle-btn {
     position: fixed;
-    top: 0; 
+    top: 30px; 
     right: 30px;
     z-index: 1000; 
     color: var(--text-primary);
-    border-color: var(--border-color);
     background-color: transparent;
     transition: all 0.2s;
   }
-  .theme-toggle-btn:hover {
-    background-color: rgba(0, 0, 0, 0.05); /* 明亮模式下的悬停效果 */
-    border-color: var(--primary-color);
-  }
+  .theme-toggle-btn:hover { background-color: rgba(0, 0, 0, 0.5); }
 
   body.dark-mode {
     --primary-color: #90caf9;
@@ -271,4 +266,6 @@
     }
     .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
     .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
+    .form-label, .copyright { color: var(--primary-color); }
+    .form-control::placeholder { color: var(--text-secondary); }
   }
