@@ -1,5 +1,7 @@
 # 🔗 Slink 短链接生成器
 
+在此项目基础上完全重构: https://github.com/crazypeace/Url-Shorten-Worker
+
 ## ✨ 项目简介
 
 **slink** 是一个轻量级、高性能的短链接服务，它利用 **Cloudflare Workers** 的全球分布式网络和 **KV 存储** 的键值数据库，提供了免费且快速的短链接生成和重定向服务。该项目旨在提供一个易于部署、功能完善的自托管短链接解决方案。
