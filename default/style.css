@@ -23,7 +23,7 @@
 }
 
 .form-label { color: var(--text-primary); }
-.text-muted, .form-control::placeholder { color: var(--text-secondary); }
+.text-muted, .form-control::placeholder { color: var(--text-secondary) !important; }
 .footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
 .footer-link:hover { color: var(--accent-color); }
 .copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
@@ -48,9 +48,9 @@
   .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
   .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
   .form-label { color: var(--text-primary); }
-  .form-control, .input-group-text { background-color: var(--input-bg); color: var(--text-secondary);}
-  .form-control:focus { border-color: var(--primary-color); }
-  .text-muted, .form-control::placeholder { color: var(--text-secondary); }
+  .form-control, .input-group-text { background-color: var(--input-bg) !important; color: var(--text-secondary) !important; }
+  .form-control:focus { border-color: var(--primary-color) !important; }
+  .text-muted, .form-control::placeholder { color: var(--text-secondary) !important; }
   .copyright, .footer-link { color: var(--text-secondary); }
   .footer-link:hover { color: var(--accent-color); }
 }
@@ -81,12 +81,12 @@ body {
   padding: 10px;
   font-size: 16px;
   transition: all 0.2s;
-  background-color: var(--input-bg);
-  color: var(--text-secondary);
+  background-color: var(--input-bg) !important;
+  color: var(--text-secondary) !important;
   border-color: var(--border-color);
   cursor: auto;
 }
-.form-control:focus { border-color: var(--primary-color); }
+.form-control:focus { border-color: var(--primary-color) !important; }
 
 .btn {
   padding: 6px 10px;
@@ -258,8 +258,6 @@ body.light-mode {
   --card-footer-border: rgba(0, 0, 0, 0.05);
   --qrcode-bg: white;
 }
-body.light-mode .text-muted, .form-control::placeholder { color: var(--text-secondary); }
-body.light-mode .form-control, .input-group-text { background-color: var(--input-bg); color: var(--text-secondary);}
 
 /* 手动切换暗黑模式 (Dark Mode) */
 body.dark-mode {
@@ -277,8 +275,6 @@ body.dark-mode {
   --card-footer-bg: rgba(0, 0, 0, 0.1);
   --qrcode-bg: rgba(103, 119, 148, 0.8);
 }
-body.dark-mode .text-muted, .form-control::placeholder { color: var(--text-secondary); }
-body.dark-mode .form-control, .input-group-text { background-color: var(--input-bg); color: var(--text-secondary); }
 
 /* 媒体查询 - 768px (布局切换：两栏变单栏) */
 @media (max-width: 768px) {
