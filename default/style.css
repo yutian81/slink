@@ -47,6 +47,9 @@
   }
   .theme-toggle-btn:hover { background-color: rgba(255, 255, 255, 0.1); }
   .list-group-item:hover { background: rgba(78, 115, 223, 0.1); }
+  .form-control, .input-group-text { background-color: var(--input-bg) !important; color: var(--text-secondary) !important; }
+  .form-control:focus { border-color: var(--primary-color) !important; }
+  .text-muted, .form-control::placeholder { color: var(--text-secondary) !important; }
 }
 
 /* 页面和排版 */
