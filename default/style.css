@@ -22,6 +22,12 @@
   --qrcode-bg: white;
 }
 
+.form-label { color: var(--text-primary); }
+.text-muted, .form-control::placeholder { color: var(--text-secondary) !important; }
+.footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
+.footer-link:hover { color: var(--accent-color); }
+.copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
+
 /* 跟随系统主题-暗黑模式 */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -66,12 +72,6 @@ body {
   margin: 0 auto;
   padding: 0 15px;
 }
-
-.form-label { color: var(--text-primary); }
-.text-muted, .form-control::placeholder { color: var(--text-secondary); }
-.footer-link { color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
-.footer-link:hover { color: var(--accent-color); }
-.copyright { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; color: var(--text-secondary); gap: 8px; font-size: 14px; }
 
 /* 按钮和表单 */
 .form-control,
