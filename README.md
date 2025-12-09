@@ -8,15 +8,7 @@
 
 <img width="1885" height="859" alt="image" src="https://github.com/user-attachments/assets/436f3b9c-7b0a-4591-9574-e187721b7d93" />
 
-## 🚀 核心功能与技术栈
-
-### 核心技术
-
-- **后端：** Cloudflare Worker
-- **数据库：** Cloudflare KV
-- **前端：** HTML, CSS
-
-### 主要功能
+## 🚀 核心功能
 
 - **短链接生成：** 支持将任意长网址生成简洁的短链接。
 - **自定义短链 Key：** 用户可以为生成的短链接指定自定义的 Key（需后端配置允许）。
