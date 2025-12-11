@@ -373,29 +373,18 @@ async function handleRequest(request, env) {
 
   // 智能判断系统类型返回不同响应
   const imageResult = getBlobAndContentType(value);
-  if (value && value.startsWith("data:image")) {
-    try {
-        const blob = base64ToBlob(value);
-        let contentType = "image/jpeg";
-        if (value.startsWith("data:image/png")) {
-            contentType = "image/png";
-        } else if (value.startsWith("data:image/gif")) {
-            contentType = "image/gif";
-        } else if (value.startsWith("data:image/webp")) {
-            contentType = "image/webp";
-        } else if (value.startsWith("data:image/svg+xml")) {
-             contentType = "image/svg+xml";
-        }
-        return new Response(blob, {
-            headers: { "Content-Type": contentType, "Cache-Control": "public, max-age=86400" }
-        });
-    } catch (e) {
-      console.error("图片处理错误:", e);
-      return new Response(value, { // 判断失败则返回文本类型
-        headers: { "Content-type": "text/plain;charset=UTF-8;" },
-      });
-    }
-  } 
+  if (imageResult) {
+    try {
+        return new Response(imageResult.blob, {
+            headers: { "Content-Type": imageResult.contentType, "Cache-Control": "public, max-age=86400" }
+        });
+    } catch (e) {
+      console.error("图片处理错误:", e);
+      return new Response(value, {
+          headers: { "Content-type": "text/plain;charset=UTF-8;" },
+      });
+    }
+  }
   else if (checkURL(value)) { // 判断是否为 URL，是则为短链接)
     return Response.redirect(value, 302);
   } 
