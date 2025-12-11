@@ -6,7 +6,7 @@
 
 **多功能文件管理器** 是一个轻量级、高性能的文件管理服务，它利用 **Cloudflare Workers** 的全球分布式网络和 **KV 存储** 的键值数据库，提供了免费且快速的短链、图床、记事本、剪贴板四大服务。该项目旨在提供一个易于部署、功能完善的自托管文件管理解决方案。
 
-<img width="1885" height="859" alt="image" src="https://github.com/user-attachments/assets/436f3b9c-7b0a-4591-9574-e187721b7d93" />
+<img width="1877" height="859" alt="image" src="https://github.com/user-attachments/assets/ce186a11-583c-41df-bfd5-7533a5a66ca7" />
 
 ## 🚀 核心功能
 
