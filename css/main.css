@@ -65,11 +65,6 @@ body.dark-mode .form-control::placeholder, body.dark-mode .result-tip { color: v
   min-height: 0;
   overflow: hidden;
 }
-.card-footer {
-  background-color: var(--card-footer-bg);
-  border-top: 1px solid var(--card-footer-border);
-  padding: 16px 20px;
-}
 
 /* 链接列表 */
 #urlList {
