@@ -1,5 +1,5 @@
 // 受保护的KEY列表
-const protect_keylist = ["password",]
+const protect_keylist = ["password", "link", "img", "note", "paste"]
 
 // 主导出函数
 export default {
@@ -113,6 +113,8 @@ async function handleRequest(request, env) {
       load_kv: env.LOAD_KV === "false" ? false : true,
   };
 
+  const password_value = await system_password(env, config); // 获取系统密码
+  
   // 定义全局默认响应头 (包含CORS) 
   let response_header = {
       "Content-type": "text/html;charset=UTF-8;application/json",
@@ -123,7 +125,7 @@ async function handleRequest(request, env) {
 
   // --- 统一处理 OPTIONS 请求 ---
   if (request.method === "OPTIONS") { return new Response(``, { headers: response_header }); }
-  
+
   // -----------------------------------------------------------------
   // 【API 接口处理】 (POST)
   // -----------------------------------------------------------------
@@ -136,7 +138,6 @@ async function handleRequest(request, env) {
       }
       
       const { cmd: req_cmd, url: req_url, key: req_key, password: req_password } = req;
-      const password_value = await system_password(env, config);
 
       // 密码校验
       if (req_password !== password_value) {
@@ -262,37 +263,39 @@ async function handleRequest(request, env) {
   const requestURL = new URL(request.url)
   const pathSegments = requestURL.pathname.split("/").filter(p => p.length > 0)
   
-  // 【处理 / 根路径】
+  // 处理 / 根路径
   if (pathSegments.length === 0) {
-      let index = await fetch(main_html)
-      index = await index.text()
-      index = index.replace(/__PASSWORD__/gm, password_value)
-      return new Response(index, { headers: response_header })
+    return new Response(html404, { headers: response_header, status: 404 });
   }
   
-  // 【处理 /密码/系统类型 路径】
-  if (pathSegments.length >= 2 && pathSegments[0] == password_value) {
-      let system_type = pathSegments[1]
-      const system_index_html = `${system_base_url}/${system_type}/index.html`; // 使用模板字符串更简洁
-      
-      let index = await fetch(system_index_html)
+  // 处理管理员路径 /密码 或 /密码/系统类型
+  if (pathSegments[0] === password_value) {
+    
+    // 情况 A: /密码/系统类型 (例如: /yutian81/link)
+    if (pathSegments.length >= 2) {
+      let system_type = pathSegments[1];
+      const system_index_html = `${system_base_url}/${system_type}/index.html`; 
+      let index = await fetch(system_index_html);
       if (index.status !== 200) {
-          return new Response(html404, { headers: response_header, status: 404 })
+        return new Response(html404, { headers: response_header, status: 404 });
       }
-      
-      index = await index.text()
-      index = index.replace(/__PASSWORD__/gm, password_value)
-      return new Response(index, { headers: response_header })
+      index = await index.text();
+      index = index.replace(/__PASSWORD__/gm, password_value);
+      return new Response(index, { headers: response_header });
+    } 
+    
+    // 情况 B: /密码 (例如: /yutian81) - 加载聚合页面 main_html
+    if (pathSegments.length === 1) {
+      let index = await fetch(main_html);
+      index = await index.text();
+      index = index.replace(/__PASSWORD__/gm, password_value);
+      return new Response(index, { headers: response_header });
+    }
   }
 
-  // 【处理 /短链 或 /图床Key 的访问】
+  // 处理 /短链 或 /图床Key 的访问
   let path = decodeURIComponent(pathSegments[0] || "");
   const params = requestURL.search;
-  
-  // -----------------------------------------------------------------
-  // 【短链/图床 Key 查询和跳转】
-  // -----------------------------------------------------------------
-
   let value = await env.LINKS.get(path); 
   if (protect_keylist.includes(path)) { value = "" }
   if (!value) { return new Response(html404, { headers: response_header, status: 404 }) }
