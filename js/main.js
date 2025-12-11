@@ -49,62 +49,6 @@ function handleModalCopy(text) {
   });
 }
 
-function shorturl(event) {
-  if (event) {
-    event.preventDefault();
-    if (event.keyCode && event.keyCode !== 13) return;
-  }
-
-  if (document.querySelector("#longURL").value == "") {
-    alert("URL不能为空!");
-    return;
-  }
-
-  document.getElementById('keyPhrase').value = document.getElementById('keyPhrase').value
-    .replace(/[\s#*|]/g, "-"); // 替换空格 (\s)、#、*、| 为连字符 (-)
-  document.getElementById("addBtn").disabled = true;
-  document.getElementById("addBtn").innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 处理中...';
-
-  fetch(apiSrv, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      cmd: "add",
-      url: document.querySelector("#longURL").value,
-      key: document.querySelector("#keyPhrase").value,
-      password: password_value
-    })
-  })
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("addBtn").disabled = false;
-      document.getElementById("addBtn").innerHTML = '<i class="fas fa-magic me-2"></i>生成';
-      if (data.status == 200) {
-        const shortUrl = window.location.protocol + "//" + window.location.host + "/" + data.key;
-        document.getElementById("result").innerHTML = shortUrl;
-
-        // 绑定模态框复制按钮事件
-        document.getElementById("copyResultBtn").onclick = () => {
-          handleModalCopy(shortUrl);
-        };
-        // 生成短链后显示模态框
-        const modal = new bootstrap.Modal(document.getElementById('resultModal'));
-        modal.show();
-        // 添加到本地存储和KV列表
-        localStorage.setItem(data.key, document.querySelector("#longURL").value);
-        addUrlToList(data.key, document.querySelector("#longURL").value);
-      } else {
-        alert(data.error || "生成短链失败");
-      }
-    })
-    .catch(err => {
-      console.error("Error:", err);
-      document.getElementById("addBtn").disabled = false;
-      document.getElementById("addBtn").innerHTML = '<i class="fas fa-magic me-2"></i>生成';
-      alert("请求失败，请重试");
-    });
-}
-
 // 获取模式名称
 function getModeName(mode) {
   switch (mode) {
@@ -126,11 +70,11 @@ function isDataMode(value, mode) {
       if (value.startsWith('http')) { isRelevant = true; }
       break;
     case 'img': // 图床：值必须是 Base64 Data URI (保持您代码中的 'img')
-      if (value.startsWith('data:image')) { isRelevant = true; }
+      if (value.startsWith('data:image/')) { isRelevant = true; }
       break;
     case 'note':
     case 'paste': // 记事本/剪贴板：值不能是 URL 或 Base64 Data URI
-      if (!value.startsWith('http') && !value.startsWith('data:image')) { isRelevant = true; }
+      if (!value.startsWith('http') && !value.startsWith('data:image/')) { isRelevant = true; }
       break;
     default: // 默认模式，不过滤
       isRelevant = true; 
@@ -264,6 +208,62 @@ function clearLocalStorage() {
   localStorage.clear()
 }
 
+function shorturl(event) {
+  if (event) {
+    event.preventDefault();
+    if (event.keyCode && event.keyCode !== 13) return;
+  }
+
+  if (document.querySelector("#longURL").value == "") {
+    alert("URL不能为空!");
+    return;
+  }
+
+  document.getElementById('keyPhrase').value = document.getElementById('keyPhrase').value
+    .replace(/[\s#*|]/g, "-"); // 替换空格 (\s)、#、*、| 为连字符 (-)
+  document.getElementById("addBtn").disabled = true;
+  document.getElementById("addBtn").innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 处理中...';
+
+  fetch(apiSrv, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      cmd: "add",
+      url: document.querySelector("#longURL").value,
+      key: document.querySelector("#keyPhrase").value,
+      password: password_value
+    })
+  })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("addBtn").disabled = false;
+      document.getElementById("addBtn").innerHTML = '<i class="fas fa-magic me-2"></i>生成';
+      if (data.status == 200) {
+        const shortUrl = window.location.protocol + "//" + window.location.host + "/" + data.key;
+        document.getElementById("result").innerHTML = shortUrl;
+
+        // 绑定模态框复制按钮事件
+        document.getElementById("copyResultBtn").onclick = () => {
+          handleModalCopy(shortUrl);
+        };
+        // 生成短链后显示模态框
+        const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+        modal.show();
+        // 添加到本地存储和KV列表
+        localStorage.setItem(data.key, document.querySelector("#longURL").value);
+        addUrlToList(data.key, document.querySelector("#longURL").value);
+      } else {
+        alert(data.error || "生成短链失败");
+      }
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      document.getElementById("addBtn").disabled = false;
+      document.getElementById("addBtn").innerHTML = '<i class="fas fa-magic me-2"></i>生成';
+      alert("请求失败，请重试");
+    });
+}
+
 function deleteShortUrl(delKeyPhrase) {
   document.getElementById("delBtn-" + delKeyPhrase).disabled = true;
   document.getElementById("delBtn-" + delKeyPhrase).innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
@@ -272,7 +272,11 @@ function deleteShortUrl(delKeyPhrase) {
   fetch(apiSrv, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cmd: "del", key: delKeyPhrase, password: password_value })
+    body: JSON.stringify({
+      cmd: "del",
+      key: delKeyPhrase,
+      password: password_value
+    })
   }).then(function (response) {
     return response.json();
   }).then(function (myJson) {
@@ -305,7 +309,11 @@ function queryVisitCount(qryKeyPhrase) {
   fetch(apiSrv, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cmd: "qrycnt", key: qryKeyPhrase + "-count", password: password_value })
+    body: JSON.stringify({
+      cmd: "qrycnt",
+      key: qryKeyPhrase,
+      password: password_value
+    })
   }).then(function (response) {
     return response.json();
   }).then(function (myJson) {
@@ -348,7 +356,11 @@ function query1KV(event) {
   fetch(apiSrv, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cmd: "qry", key: qryKeyPhrase, password: password_value })
+    body: JSON.stringify({
+      cmd: "qry",
+      key: qryKeyPhrase,
+      password: password_value
+    })
   }).then(function (response) {
     return response.json();
   }).then(function (myJson) {
@@ -381,7 +393,10 @@ function loadKV() {
   fetch(apiSrv, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ cmd: "qryall", password: password_value })
+    body: JSON.stringify({
+      cmd: "qryall",
+      password: password_value
+    })
   })
   .then(response => {
     if (!response.ok) throw new Error('加载失败');
