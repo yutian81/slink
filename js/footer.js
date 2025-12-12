@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <i class="fa-brands fa-github me-1"></i>Github
                 </a>
                 <span class="separator">|</span>
-                <a href="https://blog.notett.com" class="item footer-link" target="_blank">
+                <a href="https://blog.notett.com/post/2025/12/251212-slink" class="item footer-link" target="_blank">
                     <i class="fa-solid fa-blog me-1"></i>QingYun Blog
                 </a>
             </p>
@@ -32,3 +32,4 @@ document.addEventListener('DOMContentLoaded', function () {
         mainContentContainer.insertAdjacentHTML('afterend', htmlToInsert);
     }
 });
+
