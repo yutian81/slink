@@ -107,7 +107,6 @@ async function checkURL(URL) {
   let str = URL;
   let Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
   let objExp = new RegExp(Expression);
-  // 如果通过正则表达式，直接返回 true
   if (objExp.test(str)) { return true; } 
   else { return false; }
 }
@@ -118,26 +117,13 @@ async function save_url(URL, env) {
   if (is_exist == null) {
     await env.LINKS.put(random_key, URL) 
     return random_key
-  } else {
-    return save_url(URL, env) 
-  }
+  } else { return save_url(URL, env) }
 }
 
 async function is_url_exist(url_sha512, env) {
   let is_exist = await env.LINKS.get(url_sha512)
-  if (is_exist == null) {
-    return false
-  } else {
-    return is_exist
-  }
-}
-
-async function system_password(env, config) {
-  if (config.password.trim().length === 0) {
-    return await env.LINKS.get("password");
-  } else {
-    return config.password.trim();
-  }
+  if (is_exist == null) { return false } 
+  else { return is_exist }
 }
 
 // 主请求处理函数
@@ -153,43 +139,46 @@ async function handleRequest(request, env) {
     load_kv: env.LOAD_KV === "false" ? false : true,
   };
 
-  const password_value = await system_password(env, config); // 获取系统密码
-  
-  // 定义全局默认响应头 (包含CORS) 
-  let response_header = {
-    "Content-type": "text/html;charset=UTF-8;application/json",
+  // 定义响应头
+  const base_cors_header = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // 包含 GET 以确保短链访问正常
     "Access-Control-Allow-Headers": "Content-Type",
-  }
+  };
+  const html_response_header = { ...base_cors_header, "Content-type": "text/html;charset=UTF-8", };
+  const json_response_header = { ...base_cors_header, "Content-type": "application/json", };
+  const text_response_header = { ...base_cors_header, "Content-type": "text/plain;charset=UTF-8", };
 
-  // --- 统一处理 OPTIONS 请求 ---
-  if (request.method === "OPTIONS") { return new Response(``, { headers: response_header }); }
+  // 定义常量
+  const password_value = config.password.trim();
+  const html404 = await get404Html();
+  const response404 = () => new Response(html404, { headers: html_response_header, status: 404 });
+
+  // 定义密码和系统类型
+  const requestURL = new URL(request.url)
+  const pathSegments = requestURL.pathname.split("/").filter(p => p.length > 0)
+  const system_password = pathSegments.length > 0 ? pathSegments[0] : "";
+  const system_type = pathSegments.length >= 2 ? pathSegments[1] : "link";
+    
+  // 处理 OPTIONS 请求
+  if (request.method === "OPTIONS") { return new Response(``, { headers: text_response_header }); }
 
   // -----------------------------------------------------------------
-  // 【API 接口处理】 (POST)
+  // 【API 接口处理】 (POST 请求)
   // -----------------------------------------------------------------
   if (request.method === "POST") {
-      const requestURL = new URL(request.url);
-      const pathSegments = requestURL.pathname.split("/").filter(p => p.length > 0);
-      
-      // 从请求路径中提取管理密码
       if (pathSegments.length === 0) {
-        return new Response(`{"status":500, "error":"错误: URL中未提供密码"}`, { headers: response_header });
+        return new Response(`{"status":500, "error":"错误: URL中未提供密码"}`, { headers: json_response_header });
       }
-      const path_password = pathSegments[0];
-      if (path_password !== password_value) {
-        return new Response(`{"status":500,"key": "", "error":"错误: 无效的密码"}`, { headers: response_header });
+      if (system_password !== password_value) {
+        return new Response(`{"status":500,"key": "", "error":"错误: 无效的密码"}`, { headers: json_response_header });
       }
-
-      // 从请求路径中判断当前系统模式
-      const current_system_type = pathSegments[1] || "link";
       
       let req;
       try {
           req = await request.json();
       } catch (e) {
-          return new Response(`{"status":500, "error":"错误: 无效的JSON格式"}`, { headers: response_header });
+          return new Response(`{"status":500, "error":"错误: 无效的JSON格式"}`, { headers: json_response_header });
       }
       
       const { cmd: req_cmd, url: req_url, key: req_key } = req;
@@ -208,13 +197,12 @@ async function handleRequest(request, env) {
               break;
           
           case "add":
-              if (current_system_type === "link" && !await checkURL(req_url)) {
+              if (system_type === "link" && !await checkURL(req_url)) {
                   response_data.error = `错误: 无效的URL`;
                   break;
               }
               
               let final_key;
-              
               if (config.custom_link && req_key) {
                   if (isKeyProtected(req_key)) {
                       response_data = { status: 500, key: req_key, error: "错误: key在保护列表中" };
@@ -227,16 +215,13 @@ async function handleRequest(request, env) {
               } else if (config.unique_link) {
                   const url_sha512 = await sha512(req_url);
                   const existing_key = await is_url_exist(url_sha512, env);
-                  
                   if (existing_key) {
                       final_key = existing_key;
                   } else {
                       final_key = await save_url(req_url, env);
                       if (final_key) { await env.LINKS.put(url_sha512, final_key); }
                   }
-              } else {
-                  final_key = await save_url(req_url, env);
-              }
+              } else { final_key = await save_url(req_url, env); }
               
               // 统一处理成功或KV写入失败的返回
               if (final_key && response_data.status === 500) { 
@@ -261,7 +246,7 @@ async function handleRequest(request, env) {
                   response_data = { status: 500, key: req_key, error: "错误: key在保护列表中" };
               } else {
                   const value = await env.LINKS.get(req_key);
-                  response_data = value != null // 使用三元表达式
+                  response_data = value != null
                       ? { status: 200, error: "", key: req_key, url: value }
                       : { status: 500, key: req_key, error: "错误: key不存在" };
               }
@@ -287,15 +272,13 @@ async function handleRequest(request, env) {
               
               const keyList = await env.LINKS.list();
               let kvlist = [];
-              
               if (keyList?.keys) {
                   // 使用 filter 明确过滤条件
                   const filterKeys = (item) => !(
                       isKeyProtected(item.name) || 
                       item.name.endsWith("-count") || 
-                      item.name.length === 128 // 过滤 SHA-512 key
-                  );
-                  
+                      item.name.length === 128
+                  );      
                   for (const item of keyList.keys.filter(filterKeys)) {
                       const url = await env.LINKS.get(item.name);
                       kvlist.push({ "key": item.name, "value": url });
@@ -306,45 +289,28 @@ async function handleRequest(request, env) {
               }
               break;
       }
-
-      // 返回 JSON 响应
-      return new Response(JSON.stringify(response_data), { headers: response_header });
+      return new Response(JSON.stringify(response_data), { headers: json_response_header });
   }
 
   // -----------------------------------------------------------------
-  // 浏览器直接访问 worker 页面
+  // 【前端网页访问】（GET 请求）
   // -----------------------------------------------------------------
-  const requestURL = new URL(request.url)
-  const pathSegments = requestURL.pathname.split("/").filter(p => p.length > 0)
-  const html404 = await get404Html();
-  
-  // 处理 / 根路径
-  if (pathSegments.length === 0) {
-    return new Response(html404, { headers: response_header, status: 404 }); 
-  }
-  
-  // 处理管理员路径 /密码 或 /密码/系统类型
-  if (pathSegments[0] === password_value) {
-    
-    // 情况 A: /密码/系统类型 (例如: /yutian81/link)
-    if (pathSegments.length >= 2) {
-      let system_type = pathSegments[1];
-      const system_index_html = `${system_base_url}/${system_type}/index.html`; 
-      let index = await fetch(system_index_html);
-      if (index.status !== 200) {
-        return new Response(html404, { headers: response_header, status: 404 });
-      }
-      index = await index.text();
+  // 处理 / 根路径，返回404
+  if (pathSegments.length === 0) { return response404(); }
+
+  // 处理 /密码 和 /密码/系统类型 路径
+  if (system_password === password_value) {
+    let target_html_url;
+    if (pathSegments.length === 1) { target_html_url = main_html; }
+    else if (pathSegments.length >= 2) { target_html_url = `${system_base_url}/${system_type}/index.html`; }
+    else { return response404(); }
+    // 统一处理页面加载和替换
+    if (target_html_url) {
+      let response = await fetch(target_html_url);
+      if (response.status !== 200) { return response404(); }
+      let index = await response.text();
       index = index.replace(/__PASSWORD__/gm, password_value);
-      return new Response(index, { headers: response_header });
-    } 
-    
-    // 情况 B: /密码 (例如: /yutian81) - 加载聚合页面 main_html
-    if (pathSegments.length === 1) {
-      let index = await fetch(main_html);
-      index = await index.text();
-      index = index.replace(/__PASSWORD__/gm, password_value);
-      return new Response(index, { headers: response_header });
+      return new Response(index, { headers: html_response_header });
     }
   }
 
@@ -353,7 +319,7 @@ async function handleRequest(request, env) {
   const params = requestURL.search;
   let value = await env.LINKS.get(path); 
   if (protect_keylist.includes(path)) { value = "" }
-  if (!value) { return new Response(html404, { headers: response_header, status: 404 }) }
+  if (!value) { return response404(); }
 
   // 计数功能
   if (config.visit_count) {
@@ -365,7 +331,7 @@ async function handleRequest(request, env) {
   // 阅后即焚模式
   if (config.snapchat_mode) { 
       await env.LINKS.delete(path);
-      if (config.visit_count) { await env.LINKS.delete(path + "-count"); } // 确保计数也被删除
+      if (config.visit_count) { await env.LINKS.delete(path + "-count"); } // 同时删除计数
   }
   
   if (params) { value = value + params }
@@ -375,21 +341,21 @@ async function handleRequest(request, env) {
   if (imageResult) {
     try {
         return new Response(imageResult.blob, {
-            headers: { "Content-Type": imageResult.contentType, "Cache-Control": "public, max-age=86400" }
+            headers: {
+                "Content-Type": imageResult.contentType,
+                "Cache-Control": "public, max-age=86400",
+                "Access-Control-Allow-Origin": "*",
+            }
         });
     } catch (e) {
       console.error("图片处理错误:", e);
-      return new Response(value, {
-          headers: { "Content-type": "text/plain;charset=UTF-8;" },
-      });
+      return new Response(value, { headers: text_response_header });
     }
   }
   else if (checkURL(value)) { // 判断是否为 URL，是则为短链接)
     return Response.redirect(value, 302);
   } 
   else {
-    return new Response(value, { // 否则，视为纯文本/记事本 (note/paste)
-        headers: { "Content-type": "text/plain;charset=UTF-8;" },
-    });
+    return new Response(value, { headers: text_response_header });
   }
 }
