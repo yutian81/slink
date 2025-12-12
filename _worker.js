@@ -1,5 +1,5 @@
 // 受保护的KEY列表
-const protect_keylist = ["password"];
+const protect_keylist = ["password", "link", "img", "note", "paste", "admin"];
 
 // 主导出函数
 export default {
