@@ -1,5 +1,5 @@
 // 受保护的KEY列表
-const protect_keylist = ["password", "link", "img", "note", "paste"];
+const protect_keylist = ["password", "link", "img", "note", "paste", "admin"];
 
 // 主导出函数
 export default {
@@ -145,7 +145,6 @@ async function handleRequest(request, env) {
   // 读取环境变量配置
   const config = {
     password: env.PASSWORD || "admin",
-    // system_type: env.TYPE || "link",
     unique_link: env.UNIQUE_LINK === "false" ? false : true,
     custom_link: env.CUSTOM_LINK === "false" ? false : true,
     overwrite_kv: env.OVERWRITE_KV === "false" ? false : true,
