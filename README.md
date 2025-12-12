@@ -6,10 +6,10 @@
 
 **Slink** 是一个轻量级、高性能的多功能文件管理服务，基于 **Cloudflare Workers** 和 **KV 存储**，具备免费且快速的短链、图床、记事本、剪贴板四个模块。该项目旨在提供一个易于部署、功能完善的自托管文件管理解决方案。
 <div class="image-container" style="display: flex; justify-content: center; align-items: flex-start; gap: 10px;">
-   <img width="500" alt="image" src="https://github.com/user-attachments/assets/ce186a11-583c-41df-bfd5-7533a5a66ca7" />
-   <img width="500" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507366-image.webp" />
-   <img width="500" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507370-image.webp" />
-   <img width="500" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507405-image.webp" />
+   <img width="480" alt="image" src="https://github.com/user-attachments/assets/ce186a11-583c-41df-bfd5-7533a5a66ca7" />
+   <img width="480" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507366-image.webp" />
+   <img width="480" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507370-image.webp" />
+   <img width="480" alt="image" src="https://b2qq.24811213.xyz/2025-12/1765507405-image.webp" />
 </div>
 
 ## 🚀 核心功能
