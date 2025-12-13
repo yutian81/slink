@@ -5,21 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 未找到</title>
     <style>
+        * { margin: 0; padding: 0; }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background-color: #f8f9fa;
             color: #343a40;
-            margin: 0;
             padding: 30px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
             min-height: 100vh;
             box-sizing: border-box;
-            text-align: center;
-            flex-direction: column;
         }
-        .container { min-width: 420px; padding: 30px; background-color: #ffffff;  border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        .container {
+            width: 100%;
+            min-width: 420px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
         h1 { font-size: 60px; color: #dc3545; margin: 0 0 5px 0; font-weight: 900; }
         h2 { font-size: 24px; color: #007bff; margin-top: 0; margin-bottom: 30px; }
         h3 { font-size: 18px; }
@@ -36,9 +44,6 @@
             font-family: monospace;
             font-size: 95%;
             white-space: nowrap;
-        }
-        @media (max-width: 768px) {
-            .container { width: 90%; }
         }
     </style>
 </head>
@@ -60,5 +65,6 @@
     </div>
 </body>
 </html>
+
 
 
