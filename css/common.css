@@ -34,7 +34,7 @@ body {
 }
 
 /* 页脚 */
-.card-footer { padding: 16px 20px;
+.card-footer { padding: 10px 20px;
     background-color: transparent;
     border: none;
 }
