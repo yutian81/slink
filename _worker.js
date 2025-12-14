@@ -1,3 +1,4 @@
+
 // 受保护的KEY列表
 const protect_keylist = ["password", "link", "img", "note", "paste"];
 
@@ -294,44 +295,67 @@ async function handleRequest(request, env, ctx) {
         response_data = { status: 200, error: "", deleted_count: deletedCount, dellist: deletedDellist };
         break;
 
+      // 短key查长链 (对应前端 query1KV)
       case "qry":
         http_status = 200;
-        let keysToQuery = []; // 存储要查询的 Key 列表
-        let queryInput = req_key;
-        if (typeof req_key === 'string' && req_key.length > 0) { queryInput = [req_key]; }
-        const isExplicitQuery = Array.isArray(queryInput) && queryInput.length > 0;
+        const keyToQuery = req_key;
         
-        if (isExplicitQuery) { // 显式查询模式 (单 Key 或多 Key)
-          keysToQuery = queryInput.filter(keyName => !isKeyProtected(keyName));
-          if (keysToQuery.length === 0 && queryInput.length > 0) {
-            response_data = { status: 403, error: "错误: 所有 Key 都在保护列表中" }; http_status = 403;
+        if (typeof keyToQuery !== 'string' || keyToQuery.length === 0) {
+            response_data = { status: 400, error: "错误: qry命令必须指定单个有效的Key" }; http_status = 400;
             break;
-          }
-        } else {
-          // 查询所有模式
-          const keyList = await env.LINKS.list();
-          if (!keyList?.keys) {
-            response_data = { status: 500, error: "错误: 加载key列表失败" }; http_status = 500;
-            break;
-          }
-          keysToQuery = keyList.keys // 过滤掉受保护的 Key、计数 Key 和 SHA-512 哈希 Key
-            .map(item => item.name)
-            .filter(keyName => !( isKeyProtected(keyName) || keyName.endsWith("-count") || keyName.length === 128 ));
         }
-
-        // Promise.all 并行执行
-        const urlPromises = keysToQuery.map(keyName => env.LINKS.get(keyName));
-        const urls = await Promise.all(urlPromises);
-        let qrylist = [];
-        keysToQuery.forEach((key, index) => {
-          if (urls[index] != null) { qrylist.push({ "key": key, "value": urls[index] }); }
-        });
+        if (isKeyProtected(keyToQuery)) {
+            response_data = { status: 403, error: "错误: key在保护列表中" }; http_status = 403;
+            break;
+        }
+        if (keyToQuery.length === 128 || keyToQuery.endsWith("-count")) {
+            response_data = { status: 404, error: "错误: Key 不存在或已过期" }; http_status = 404;
+            break;
+        }
         
-        if (isExplicitQuery && qrylist.length === 0) {
-            response_data = { status: 404, error: "错误: Key 不存在或 Key 已过期" }; http_status = 404;
+        const value = await env.LINKS.get(keyToQuery);
+        if (value === null) {
+            response_data = { status: 404, error: "错误: Key 不存在或已过期" }; http_status = 404;
         } else {
+            // 仅返回主 Key 和 Value
+            const qrylist = [{ "key": keyToQuery, "value": value }];
             response_data = { status: 200, error: "", qrylist: qrylist };
         }
+        break;
+        
+      // 查询所有主 Key（对应前端 loadKV)
+      case "qryall":
+        http_status = 200;
+        let keysToQueryAll = [];
+        
+        // 获取所有 Key列表
+        const keyListAll = await env.LINKS.list();
+        if (!keyListAll?.keys) {
+            response_data = { status: 500, error: "错误: 加载key列表失败" }; http_status = 500;
+            break;
+        }
+        
+        // 筛选 Key
+        keysToQueryAll = keyListAll.keys
+          .map(item => item.name)
+          .filter(keyName => !( isKeyProtected(keyName) || keyName.endsWith("-count") || keyName.length === 128 ));
+        if (keysToQueryAll.length === 0) {
+            response_data = { status: 404, error: "警告: 没有找到任何有效的主Key" }; http_status = 404;
+            break;
+        }
+        
+        // 并行获取 Value
+        const urlPromisesAll = keysToQueryAll.map(keyName => env.LINKS.get(keyName));
+        const urlsAll = await Promise.all(urlPromisesAll);
+        let qrylistAll = [];
+        keysToQueryAll.forEach((key, index) => {
+            if (urlsAll[index] != null) { qrylistAll.push({ "key": key, "value": urlsAll[index] }); }
+        });
+        if (qrylistAll.length === 0) {
+            response_data = { status: 404, error: "警告: Key 不存在或已过期" }; http_status = 404;
+            break;
+        }
+        response_data = { status: 200, error: "", qrylist: qrylistAll };
         break;
       
       case "qrycnt":
