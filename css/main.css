@@ -38,9 +38,12 @@ body {
 .btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
 .btn-primary:hover, .btn-primary:focus { background-color: var(--accent-color); border-color: var(--accent-color); }
 
-.card:hover {
-  box-shadow: 0 8px 20px rgba(58, 59, 69, 0.2);
-  transform: translateY(-2px);
+.card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 20px rgba(58, 59, 69, 0.15);
+  transition: all 0.3s ease;
 }
 .card-header {
   background-color: var(--primary-color);
@@ -50,6 +53,10 @@ body {
   border-radius: 8px 8px 0 0;
   padding: 12px 20px;
   border-bottom: none;
+}
+.card:hover {
+  box-shadow: 0 8px 20px rgba(58, 59, 69, 0.2);
+  transform: translateY(-2px);
 }
 
 /* 链接列表 */
