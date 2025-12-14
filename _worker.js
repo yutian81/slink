@@ -298,9 +298,8 @@ async function handleRequest(request, env, ctx) {
         http_status = 200;
         let keysToQuery = []; // 存储要查询的 Key 列表
         let queryInput = req_key;
-        const isSingleKeyString = typeof req_key === 'string' && req_key.length > 0;
-        if (isSingleKeyString) { queryInput = [req_key]; }
-        const isExplicitQuery = isSingleKeyString || (Array.isArray(queryInput) && queryInput.length > 0);
+        if (typeof req_key === 'string' && req_key.length > 0) { queryInput = [req_key]; }
+        const isExplicitQuery = Array.isArray(queryInput) && queryInput.length > 0;
         
         if (isExplicitQuery) { // 显式查询模式 (单 Key 或多 Key)
           keysToQuery = queryInput.filter(keyName => !isKeyProtected(keyName));
