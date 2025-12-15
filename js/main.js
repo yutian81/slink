@@ -228,8 +228,8 @@ async function shorturl(event) {
       return;
     }
   }
-  
   if (longUrlElement.value == "") { showResultModal("URL不能为空!"); return; }
+
   const longUrl = longUrlElement.value.trim();
   const keyPhrase = document.getElementById('keyPhrase').value
     .replace(/[\s#*|]/g, "-"); // 替换非法字符为连字符
@@ -255,7 +255,9 @@ async function shorturl(event) {
       document.getElementById("copyResultBtn").onclick = () => { handleModalCopy(shortUrl); };
       showResultModal(shortUrl);
       localStorage.setItem(data.key, longUrlElement.value);
-      addUrlToList(data.key, longUrlElement.value);
+      longUrlElement.value = "";
+      document.getElementById('keyPhrase').value = "";
+      loadUrlList();
     } else {
       showResultModal(data.error || "生成失败");
     }
@@ -391,15 +393,22 @@ async function loadKV() {
     if (data.status == 200) {
       clearLocalStorage();
       let loadedCount = 0;
+      longUrlElement.value = "";
 
       for (const item of data.qrylist) {
         const key = item.key;
-        const value = item.value;
-        if (isDataMode(value, currentMode)) { 
-          localStorage.setItem(key, value); 
-          loadedCount++; 
+        let value = item.value;
+          if (window.current_mode === 'img' && value.length > 500000) {
+          value = "Base64数据过大, 未在本地存储"; 
         }
-      }
+
+        if (isDataMode(value, currentMode)) { 
+            // 如果 value 是原始的大 Base64 字符串，此处仍需使用原始的 item.value
+            // 确保本地存储的是原始值，如果之前被替换为提示，那么就存储提示
+            localStorage.setItem(key, item.value); 
+            loadedCount++; 
+        }
+    }
 
       loadUrlList();
       const modeName = getModeName(currentMode);
