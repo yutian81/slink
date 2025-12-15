@@ -35,7 +35,7 @@
 | ------------------ | ---------------- | ----------------------------------------- |
 | **短链模块**           | 短链生成<br>唯一链接     | 支持将任意长网址生成短链接<br>对同一长链接，只生成一个短链接 |
 | **图床模块**           | 图片上传<br>直链预览     | 上传图片到图床，返回图片的访问链接<br>可生成预览图与访问直链          |
-| **记事本模块**     | 文本存储<br>Markdown | 可存储任意文本内容<br>计划支持 Markdown 语法             |
+| **笔记模块**     | 文本存储<br>Markdown | 可存储任意文本内容<br>计划支持 Markdown 语法             |
 
 ---
 
@@ -59,27 +59,6 @@
 ---
 
 ## API 接口说明
-
-- API 端点：`/<ADMIN>`，示例 `/admin`，`add` 命令需要添加`/<type>`，示例 `/admin/link`
-- 请求体：`"Content-type": "application/json"`
-
-| 方法  | 参数                          | cmd 命令 | 描述       |
-| ---- | ----------------------------- | ------- | ----------- |
-| POST | cmd, url, key, password, type | add    | 创建短链接   |
-| POST | cmd, key, password            | del    | 删除短链接   |
-| POST | cmd, key, password            | qry    | 查询短链接   |
-| POST | cmd, key, password            | qrycnt | 查询访问计数 |
-
-- add 命令说明：
-  - 当 key 为空时，生成随机短链接
-  - 当 key 为单个字符串，使用该字符串作为短链接 Key
-  - key 不支持数组格式，即不支持批量创建短链接
-  - type 为链接模式，支持 `link`、`img`、`note`、`paste` 四种类型
-
-- del、qry、qrycnt 命令说明：
-  - 当 key 为空时，对所有短链接操作
-  - 当 key 为单个字符串时，对该短链接操作，格式为 `key`
-  - 当 key 为数组时，对数组中的每个短链接操作，格式为 `["key1", "key2", "key3"]`
 
 详见 [API 文档](https://github.com/yutian81/slink/blob/main/API.md)
 
