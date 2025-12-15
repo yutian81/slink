@@ -1,14 +1,14 @@
 // --- 全局变量和初始化 ---
 let apiSrv = window.location.pathname;
 let buildValueItemFunc = buildValueTxt;
-let api_password;
-let longUrlElement;
-let urlListElement;
+let longUrlElement = document.querySelector("#longURL");
+let urlListElement = document.querySelector("#urlList");
+let api_password = document.querySelector("#passwordText").value;
 
 // 路径解析和模式确定
 const pathnameSegments = window.location.pathname.split("/").filter(p => p.length > 0);
-window.adminPath = pathnameSegments.length > 0 ? '/' + pathnameSegments[0] : '';
 const modeFromPath = pathnameSegments.length >= 2 ? pathnameSegments[1] : (pathnameSegments.length === 1 ? 'link' : '');
+window.adminPath = pathnameSegments.length > 0 ? '/' + pathnameSegments[0] : '';
 window.current_mode = ['link', 'img', 'note', 'paste'].includes(modeFromPath) ? modeFromPath : 'link';
 window.visit_count_enabled = false; // 由后端配置决定
 
@@ -16,6 +16,14 @@ window.visit_count_enabled = false; // 由后端配置决定
 
 function clearLocalStorage() {
   localStorage.clear();
+}
+
+// 定义模式
+function buildValueTxt(longUrl) {
+  let valueTxt = document.createElement('div');
+  valueTxt.classList.add("form-control", "text-muted", "small");
+  valueTxt.innerText = longUrl;
+  return valueTxt;
 }
 
 // 按钮状态管理
@@ -215,22 +223,13 @@ function toggleQrcode(shortUrl) {
   }
 }
 
-function buildValueTxt(longUrl) {
-  let valueTxt = document.createElement('div');
-  valueTxt.classList.add("form-control", "text-muted", "small");
-  valueTxt.innerText = longUrl;
-  return valueTxt;
-}
-
 // --- API 调用函数 ---
 
 // 生成短链
 async function shorturl() {
-  if (longUrlElement.value == "") {
-    showResultModal("URL不能为空!");
-    return;
-  }
+  if (longUrlElement.value == "") { showResultModal("URL不能为空!"); return; }
 
+  const longUrl = longUrlElement.value.trim();
   const keyPhrase = document.getElementById('keyPhrase').value
     .replace(/[\s#*|]/g, "-"); // 替换非法字符
   document.getElementById('keyPhrase').value = keyPhrase;
@@ -242,7 +241,7 @@ async function shorturl() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         cmd: "add",
-        url: longUrlElement.value,
+        url: longUrl,
         key: keyPhrase,
         password: api_password,
         type: window.current_mode
@@ -410,10 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
   popoverTriggerList.map(function (popoverTriggerEl) {
     return new bootstrap.Popover(popoverTriggerEl);
   });
-
-  longUrlElement = document.querySelector("#longURL");
-  urlListElement = document.querySelector("#urlList");
-  api_password = document.querySelector("#passwordText").value;
+  
   document.getElementById("passwordText").readOnly = true;
 
   // 获取后端配置
