@@ -126,7 +126,8 @@ function handleKvCheckAndRespond(config, headers, commandType = "执行操作") 
 
 // 处理所有 POST 请求的 API 命令
 async function handleApiCommand(req, env, config, json_response_header, ctx) {
-    const { cmd: req_cmd, url: req_url, key: req_key, type: req_type } = req;
+    const { cmd: req_cmd, url: req_url, key: req_key, password: req_password, type: req_type } = req;
+    
     let response_data = { status: 400, error: `错误: 未知的命令 ${req_cmd}` };
     const isKeyProtected = (key) => protect_keylist.includes(key);
     let http_status = 400;
@@ -363,7 +364,7 @@ async function handleRequest(request, env, ctx) {
       return new Response(`{"status":400, "error":"错误: 无效的JSON格式"}`, { headers: json_response_header, status: 400 });
     }
     
-    if (config.password !== req.password) {
+    if (req.password !== config.password) {
       return new Response(`{"status":401, "error":"错误: 无效的API秘钥"}`, { headers: json_response_header, status: 401 });
     }
     // 将处理转发给api函数
