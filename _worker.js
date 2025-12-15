@@ -131,10 +131,6 @@ async function handleApiCommand(req, env, ctx, config, isKeyProtected, json_resp
     
     // 添加短链
     case "add":
-      if (!req_url || typeof req_url !== 'string' || req_url.trim().length === 0) {
-        response_data.error = `错误: URL内容不能为空`; http_status = 400;
-        break;
-      }
       if (req_type === "link") {
         if (!checkURL(req_url)) {
           response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400;
