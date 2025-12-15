@@ -143,8 +143,8 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         
       case "add":
         if (req_type === "link") {
-          if (checkURL(req_url)) {
-            response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400;
+          if (!checkURL(req_url)) { 
+            response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400; 
             break;
           }
         } else if (req_type === "img") {
