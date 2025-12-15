@@ -115,6 +115,7 @@ body {
   max-height: 150px;
   opacity: 1;
   padding: 10px;
+  margin: 0;
   border-width: 0 1px 1px 1px;
 }
 .qrcode-container canvas { width: auto; height: auto; max-width: 128px; }
