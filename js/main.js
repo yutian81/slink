@@ -228,8 +228,8 @@ async function shorturl(event) {
       return;
     }
   }
+  
   if (longUrlElement.value == "") { showResultModal("URL不能为空!"); return; }
-
   const longUrl = longUrlElement.value.trim();
   const keyPhrase = document.getElementById('keyPhrase').value
     .replace(/[\s#*|]/g, "-"); // 替换非法字符为连字符
