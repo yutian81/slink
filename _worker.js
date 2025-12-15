@@ -143,6 +143,21 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         break;
         
       case "add":
+        if (req_type === "link") {
+          if (!checkURL(req_url)) { 
+            response_data.error = `错误: 链接类型必须是有效的URL`; http_status = 400; 
+            break;
+          }
+        } else if (req_type === "img") {
+            if (!req_url || !req_url.startsWith("data:image/")) {
+              response_data.error = `错误: 图床类型必须是有效的Base64`; http_status = 400;
+              break;
+            }
+        } else if (!["note", "paste"].includes(req_type)) {
+          response_data.error = `错误: 未知的内容类型: ${req_type}`; http_status = 400;
+          break;
+        }
+        
         let final_key;
         http_status = 200;
         if (config.custom_link && req_key) {
