@@ -14,7 +14,7 @@ function applyTheme(theme) {
         iconClass = '<i class="fas fa-sun"></i>'; // 暗黑模式时显示太阳图标
         localStorage.setItem('theme', 'dark');
     } else { 
-        localStorage.removeItem('theme'); // 清除存储，确认使用默认模式
+        localStorage.setItem('theme', 'light'); // 默认使用明亮模式
     }
 
     themeToggleBtn.innerHTML = iconClass;
@@ -37,19 +37,27 @@ function initThemeToggle() {
 function createCornerHTML() {
     const adminPathPrefix = window.adminPath || '';
     // 定义模式切换列表
-    const modes = [ // 此处为相对于管理路径
+    const modes = [
         { path: '/', icon: 'fas fa-link', text: '短链' }, 
         { path: '/note', icon: 'fas fa-note-sticky', text: '笔记' },
+        { path: 'https://tgfile.yuzong.nyc.mn', icon: 'fas fa-image', text: 'TG图床' },
+        { path: 'https://ghfile.sss.us.kg', icon: 'fas fa-file-alt', text: 'Git文件' },
+        { path: 'https://mail.v360.pp.ua', icon: 'fas fa-envelope', text: '临时邮箱' },
     ];
     
     // 构建下拉菜单的 HTML
     const modeItemsHTML = modes.map(mode => {
-        let finalPath;
-        if (adminPathPrefix) {
-            if (mode.path === '/') { finalPath = adminPathPrefix; } 
-            else { finalPath = adminPathPrefix + mode.path; }
-        } 
-        else { finalPath = mode.path; } // 未知路径返回404
+        let finalPath = mode.path;
+        const isAbsolutePath = mode.path.startsWith('http://') || mode.path.startsWith('https://');
+
+        if (!isAbsolutePath && adminPathPrefix) {
+            if (mode.path === '/') {
+                finalPath = adminPathPrefix;
+            } else {
+                if (prefix.endsWith('/')) { prefix = prefix.slice(0, -1); }
+                finalPath = adminPathPrefix + mode.path;
+            }
+        }
         return `<li data-path="${finalPath}">
                  <i class="${mode.icon} me-2"></i>${mode.text}
                </li>`;
