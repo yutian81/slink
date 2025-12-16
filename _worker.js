@@ -291,7 +291,12 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
           let currentType;
           if (req_type_filter) {
             // 1. 传入了 type
-            originalKey = item.value;
+            const prefix = req_type_filter + ':';
+            if (item.name.startsWith(prefix)) {
+              originalKey = item.name.substring(prefix.length);
+            } else {
+              originalKey = item.value;
+            }
             if (typeof originalKey === 'string') originalKey = originalKey.trim();
             currentType = req_type_filter;
           } else {
@@ -302,8 +307,10 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
             }
             currentType = 'unknown';
           }
-          urlPromises.push(env.LINKS.get(originalKey, { type: 'text' }));
-          finalResults.push({ key: originalKey, type: currentType });
+          if (originalKey) {
+            urlPromises.push(env.LINKS.get(originalKey, { type: 'text' }));
+            finalResults.push({ key: originalKey, type: currentType });
+          }
         }
         const urls = await Promise.all(urlPromises);
         qrylist = finalResults.map((result, index) => ({
