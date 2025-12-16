@@ -9,7 +9,7 @@
     <link rel="icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f517.svg" type="image/svg+xml">
     <link rel="stylesheet" href="https://blog2.811520.xyz/slink/css/main.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://blog2.811520.xyz/slink/css/common.css" crossorigin="anonymous">
-    
+    <!-- cdn示例：<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yutian81/slink@main/css/main.css"> -->    
     <style>
         .container { min-height: calc(100vh - 20px); display: flex; flex-direction: column; }
         .card-body { padding: 20px 20px 10px 20px; overflow: hidden; }
@@ -19,16 +19,24 @@
         #urlList { flex-grow: 1; padding-right: 5px; }
         .right-column-card { height: 100%; }
         .card-body.preview-body { flex-grow: 1; display: flex; flex-direction: column; padding-bottom: 20px; }
-        .markdown-preview { flex-grow: 1; min-height: 200px; overflow-y: auto; border: 1px solid var(--border-color);  padding: 15px; border-radius: 8px; background-color: var(--input-bg); }
+        .markdown-preview {
+          flex-grow: 1;
+          min-height: 200px;
+          overflow-y: auto;
+          border: 1px solid var(--border-color);
+          padding: 15px; border-radius: 8px;
+          background-color: var(--input-bg);
+          color: var(--text-primary);
+        }
         @media (max-width: 768px) {
-            .container { min-height: 100vh; }
-            .row { flex-grow: 0; align-items: flex-start; }
-            .left-column-stack, .right-column-card { height: auto; }
-            .col-lg-6.mb-4 { margin-bottom: 20px !important; }
-            .col-lg-6.mb-4:last-child { margin-bottom: 0 !important; }
-            .list-card-body, .card-body.preview-body { flex-grow: 0; min-height: auto; }
-            .form-control::placeholder, .text-center { font-size: 13px; }
-            #urlList { flex-grow: 0; max-height: 500px; padding-right: 0; }
+          .container { min-height: 100vh; }
+          .row { flex-grow: 0; align-items: flex-start; }
+          .left-column-stack, .right-column-card { height: auto; }
+          .col-lg-6.mb-4 { margin-bottom: 20px !important; }
+          .col-lg-6.mb-4:last-child { margin-bottom: 0 !important; }
+          .list-card-body, .card-body.preview-body { flex-grow: 0; min-height: auto; }
+          .form-control::placeholder, .text-center { font-size: 13px; }
+          #urlList { flex-grow: 0; max-height: 500px; padding-right: 0; }
         }
     </style>
 </head>

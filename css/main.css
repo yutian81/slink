@@ -33,7 +33,7 @@ body {
 }
 .result-tip,
 .form-control::placeholder { color: var(--text-secondary); }
-.form-control:focus { border-color: var(--primary-color); }
+.form-control:focus { background-color: var(--input-bg); border-color: var(--primary-color); }
 .btn { padding: 6px 10px; font-weight: 600; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
 .btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
 .btn-primary:hover, .btn-primary:focus { background-color: var(--accent-color); border-color: var(--accent-color); }
