@@ -241,22 +241,6 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
         }
         break;
         
-      case "qrycnt":
-        const qrycntCheck = handleKvCheck(config, json_response_header, "查询计数操作");
-        if (qrycntCheck) return qrycntCheck;
-        
-        http_status = 200;
-        if (!config.visit_count) {
-          response_data = { status: 400, key: req_key, error: "错误: 统计功能未开启" }; http_status = 400;
-        } else if (isKeyProtected(req_key)) {
-          response_data = { status: 403, key: req_key, error: "错误: key在保护列表中" }; http_status = 403;
-        } else {
-          const value = await env.LINKS.get(req_key + "-count");
-          const final_count = value ?? "0";
-          response_data = { status: 200, error: "", key: req_key, count: final_count };
-        }
-        break;
-        
       case "qryall":
         const qryAllCheck = handleKvCheck(config, json_response_header, "查询操作");
         if (qryAllCheck) return qryAllCheck;
@@ -275,6 +259,22 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
           response_data = { status: 200, error: "", kvlist: kvlist };
         } else {
           response_data = { status: 500, error: "错误: 加载key列表失败" }; http_status = 500;
+        }
+        break;
+      
+      case "qrycnt":
+        const qrycntCheck = handleKvCheck(config, json_response_header, "查询计数操作");
+        if (qrycntCheck) return qrycntCheck;
+        
+        http_status = 200;
+        if (!config.visit_count) {
+          response_data = { status: 400, key: req_key, error: "错误: 统计功能未开启" }; http_status = 400;
+        } else if (isKeyProtected(req_key)) {
+          response_data = { status: 403, key: req_key, error: "错误: key在保护列表中" }; http_status = 403;
+        } else {
+          const value = await env.LINKS.get(req_key + "-count");
+          const final_count = value ?? "0";
+          response_data = { status: 200, error: "", key: req_key, count: final_count };
         }
         break;
     }

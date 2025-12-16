@@ -60,7 +60,6 @@
     position: absolute;
     top: 100%; 
     right: 0;
-    margin: 5px 0 0 0;
     padding: 10px 0;
     background-color: var(--qrcode-bg);
     border: var(--border-color);
@@ -68,7 +67,8 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     list-style: none;
     display: none;
-    min-width: 100px;
+    width: fit-content;
+    min-width: 120px;
 }
 .mode-select-dropdown li {
     padding: 5px 15px;
