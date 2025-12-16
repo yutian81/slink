@@ -301,10 +301,19 @@ async function handleApiCommand(req, env, config, json_response_header, ctx) {
             }
             currentType = 'unknown';
           }
-          urlPromises.push(env.LINKS.get(originalKey));
+          urlPromises.push(env.LINKS.get(originalKey, { type: 'text' }));
           finalResults.push({ key: originalKey, type: currentType });
         }
-        const urls = await Promise.all(urlPromises); // 批量查询内容
+        const urls = await Promise.all(urlPromises);
+        // 🚨 强制诊断：使用一个确定的、已知的 Key 进行查询
+        const diagnosticKey = 'baozhen'; // <--- 替换为你 KV 截图中的一个 Key
+        const diagnosticValue = await env.LINKS.get(diagnosticKey, { type: 'text' });
+        console.log(`--- DIAGNOSTIC ---`);
+        console.log(`Key used for testing: ${diagnosticKey}`);
+        console.log(`Value from test query: ${diagnosticValue}`);
+        console.log(`Total URLs fetched (should not be null):`, urls);
+        console.log(`------------------`);
+        // --- 强制诊断结束 ---
         qrylist = finalResults.map((result, index) => ({
           key: result.key,
           value: urls[index],
