@@ -12,7 +12,7 @@ const pathnameSegments = window.location.pathname.split('/').filter((p) => p.len
 const modeFromPath = pathnameSegments.length >= 2 ? pathnameSegments[1] : pathnameSegments.length === 1 ? 'link' : '';
 window.adminPath = pathnameSegments.length > 0 ? '/' + pathnameSegments[0] : '';
 window.current_mode = ['note'].includes(modeFromPath) ? modeFromPath : 'link';
-window.visit_count_enabled = true;
+window.visit_count_enabled = false;
 
 // --- 实用工具函数 ---
 function clearModeLocalStorage() {
