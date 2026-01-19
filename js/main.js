@@ -131,7 +131,7 @@ function clearInputFields() {
 
 // 不同模式下，在列表中加载不同数据
 function loadUrlList() {
-  clearInputFields();
+  // clearInputFields();
   const urlList = urlListElement;
   urlList.innerHTML = '';
   const currentMode = window.current_mode;
